@@ -3,6 +3,8 @@
 
 This project is a budget management system designed to help users manage their finances effectively. It allows users to create and manage budgets, track transactions, generate reports, and receive spending suggestions and predictions.
 
+[BudgetGuru](https://github.com/NoahCardoso/BudgetGuru)
+
 ## Key Features
 
 - **Budget Management**: Create, view, and select budgets for different categories such as Food & Drink, Entertainment, Groceries, and Transport.

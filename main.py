@@ -52,7 +52,7 @@ def main():
     current_budget, budgets = load_data()
 
     if not budgets:  # Initialize if no data exists
-        #budgets = [Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),]),Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])]
+        
         budgets = []
         current_budget = Budget(categories, [0, 0, 0, 0])
 
