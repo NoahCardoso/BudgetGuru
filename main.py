@@ -1,170 +1,171 @@
+import json
+import os
 from budget import Budget
-from expenses import Transaction
 from forcast import forcast_spending_next_budget, predict_spending_next_budget
 from graphme import make_report
 from suggestions import suggestions
 
-
+SAVE_FILE = "budgets_data.json"
 categories = ["Food & Drink", "Entertainment", "Groceries", "Transport"]
-		
+
+
+def save_data(current_budget, budgets):
+    data = {
+        "current_budget": current_budget.to_dict(),
+        "budgets": [budget.to_dict() for budget in budgets]
+    }
+    with open(SAVE_FILE, "w") as f:
+        json.dump(data, f)
+    print("Data saved successfully.")
+
+
+def load_data():
+    if not os.path.exists(SAVE_FILE):
+        return None, []
+
+    with open(SAVE_FILE, "r") as f:
+        data = json.load(f)
+
+    budgets = [Budget.from_dict(b) for b in data["budgets"]]
+    current_budget = Budget.from_dict(data["current_budget"])
+    return current_budget, budgets
+
+
 def end_line():
-	print("")
-	print("- " * 10)
-	print("")
+    print("\n" + "- " * 10 + "\n")
+
+
 def do_while_int(a, b):
-	n = a
-	while not(n > a and n < b):
-		try:
-			n = int(input())
-		except ValueError:
-			n = a
-			print("Error: Must be an int")
-	return n
+    n = a
+    while not (n > a and n < b):
+        try:
+            n = int(input())
+        except ValueError:
+            n = a
+            print("Error: Must be an int")
+    return n
 
 
 def main():
+    # Load existing data if available
+    current_budget, budgets = load_data()
 
-	budgets = [Budget(categories, [10, 10, 10, 10], []), Budget(categories, [20, 15, 30, 60], [Transaction(10, "n", "n", "Transport"), Transaction(20, "n", "n", "Transport")])]
-	current_budget = budgets[-1]
-	while True:
-		print("1. Budget")
-		print("2. Transaction")
-		print("3. View Report")
-		print("4. View Suggestions")
-		print("5. View Predictions")
-		print("press q to esc any menu")
+    if not budgets:  # Initialize if no data exists
+        budgets = []
+        current_budget = Budget(categories, [0, 0, 0, 0], [])
 
-		choice = input()
+    while True:
+        print("1. Budget")
+        print("2. Transaction")
+        print("3. View Report")
+        print("4. View Suggestions")
+        print("5. View Predictions")
+        print("Press 'q' to exit")
 
-		if choice == "1":
-			end_line()
-			while True:
-				
-				print("1. Add Budget")
-				print("2. Select Budget")
-				print("3. View Budget")
+        choice = input()
 
-				choice = input()
-				end_line()
-				if choice == "1":
-					print("Enter amount for each category: 10 20 20 30")
-					print(" ".join(categories))
-					amounts = input().split(" ")
+        if choice == "1":
+            end_line()
+            while True:
+                print("1. Add Budget")
+                print("2. Select Budget")
+                print("3. View Budget")
+                choice = input()
+                end_line()
 
-					try:
-						for i in range(len(categories)):
-							amounts[i] = int(amounts[i])
+                if choice == "1":
+                    print("Enter amount for each category: 10 20 20 30")
+                    print(" ".join(categories))
+                    amounts = input().split(" ")
 
-						budgets.append(Budget(categories, amounts))
-						current_budget = budgets[-1]
-						print(current_budget)
-					except IndexError:
-						print("Error! You must enter a positive number!")
-					except ValueError:
-						print("Error! You must enter a number!")
-					
-					print()
+                    try:
+                        amounts = [int(amount) for amount in amounts]
+                        budgets.append(Budget(categories, amounts))
+                        current_budget = budgets[-1]
+                        print(current_budget)
+                    except (IndexError, ValueError):
+                        print("Error! Please enter valid numbers!")
 
-				elif choice == "2":
-					end_line()
-					for budget, i in zip(budgets, range(1, len(budgets)+1)):
-						print(str(i) + ". ", end="")
-						print(budget)
-					try:
-						index = int(input())
-						if index > 0 and index <= len(budgets):
-							current_budget = budgets[index-1]
-							print("Done")
-						else:
-							print("Error! Budget not found!")
-					except ValueError:
-						print("Error! You must enter a number!")
+                elif choice == "2":
+                    for i, budget in enumerate(budgets, 1):
+                        print(f"{i}. {budget}")
+                    try:
+                        index = int(input("Select a budget by number: "))
+                        if 1 <= index <= len(budgets):
+                            current_budget = budgets[index - 1]
+                            print("Done")
+                        else:
+                            print("Error! Budget not found!")
+                    except ValueError:
+                        print("Error! You must enter a number!")
 
-					print()
+                elif choice == "3":
+                    print(current_budget)
 
-				elif choice == "3":
-					print(current_budget)
+                elif choice == "q":
+                    break
+        # Transaction handling
 
-				elif choice == "q":
-					break
-		
+        elif choice == "2":
+            end_line()
+            while True:
+                print("1. Add Transaction")
+                print("2. View Transactions")
+                choice = input()
 
-		# Transcations
-		elif choice == "2":
-			end_line()
-			while True:
-				print("1. Add Transaction")
-				print("2. View Transactions")
-				choice = input()
+                if choice == "1":
+                    end_line()
+                    print("How many transactions would you like to add?")
+                    n = do_while_int(0, 100)
+                    print("Amount | Date | Name | Category")
+                    for i in range(n):
+                        while True:
+                            try:
+                                amount, date, name, category = input().split(" ")
+                                amount = int(amount)
+                                current_budget.add_transaction(amount, date, name, category)
+                                break
+                            except ValueError:
+                                print("Error! Enter valid values.")
 
-				if choice == "1":
-					end_line()
+                elif choice == "2":
+                    current_budget.print_transactions()
 
-					print("How many transactions would you like to add?")
+                elif choice == "q":
+                    break
 
-					n = do_while_int(0,100)
+        # Reports and other features omitted for brevity...
+        # Report
+        elif choice == "3":
+            end_line()
+            print("View Budget vs Spending")
+            make_report(current_budget.budget, current_budget.total_spending())
+            print("Red show spending. Green shows you budgeted amount")
+            input()
 
-					print()
-					print("Amount | Date | Name | Category")
-					for i in range(n):
-						amount, data, name, category = [-1, "", "", ""]
-						while not (amount >= 0):
-							amount, data, name, category = input().split(" ")
-							try:
-								amount = int(amount)
-							except ValueError:
-								print("Error! Amount must be an int!")
-						current_budget.add_transaction(amount, data, name, category)
+        elif choice == "4":
+            end_line()
+            suggestions(current_budget)
+            choice = input("press q")
+            break
 
-				elif choice == "2":
-					end_line()
-					current_budget.print_transactions()
-				elif choice == "q":
-					break
+        elif choice == "5":
+            end_line()
+            print("1. Predict based on previous budgets")
+            print("2. Predict based current budget")
+            choice = input()
+            if choice == "1":
+                make_report(current_budget.budget,
+                            forcast_spending_next_budget(budgets, categories))
+            elif choice == "2":
+                make_report(current_budget.budget, predict_spending_next_budget(
+                    current_budget, categories))
+            temp = input()
 
-		# Report
-		elif choice == "3":
-			end_line()
-			print("View Budget vs Spending")
-			make_report(current_budget.budget, current_budget.total_spending())
-			print("Red show spending. Green shows you budgeted amount")
-			input()
-		
-		elif choice == "4":
-			end_line()
-			suggestions(current_budget)
-			choice = input("press q")
-			break
+        elif choice == "q":
+			# Save data before exiting
+           save_data(current_budget, budgets)
+           break
 
-		elif choice == "5":
-			end_line()
-			print("1. Predict based on previous budgets")
-			print("2. Predict based current budget")
-			choice = input()
-			if choice == "1":
-				make_report(current_budget.budget, forcast_spending_next_budget(budgets, categories))
-			elif choice == "2":
-				make_report(current_budget.budget, predict_spending_next_budget(current_budget, categories))
-			temp = input()
-			
-
-		end_line()
-	
-	
-
-
-main()
-
-'''
-		elif choice == 2:
-			print(budget.total_spending())
-			make_report(budget.budget, budget.total_spending())
-			break
-		elif choice == 3:
-			suggestions(budget)
-		elif choice == 5:
-			print(predict_spending_next_budget(all_budgets, categories))
-			make_report(budget2.budget, predict_spending_next_budget(all_budgets, categories))
-		elif choice == 6:
-			print(predict_spending(all_budgets, "Food & Drink"))
-		'''
+if __name__ == "__main__":
+    main()

@@ -1,5 +1,5 @@
-
 class Transaction:
+	#Transaction(amount, "date", "name", "category")
 	def __init__(self, amount, date, name, category):
 		self._amount = float(f"{(amount):.4f}")
 		self._date = date
@@ -46,8 +46,20 @@ class Transaction:
 			raise ValueError("Category must be a string")
 		self._category = value
 	
+	def to_dict(self):
+		return {
+			"amount": self.amount,
+			"date": self.date,
+			"name": self.name,
+			"category": self.category
+		}
+
+	@classmethod
+	def from_dict(cls, data):
+		return cls(data["amount"], data["date"], data["name"], data["category"])
+
 	def __repr__(self):
-		return f"Amount: {self.amount}, Date: {self.date}, Name: {self.name}, Category: {self.category}"
+		return f"Transaction({self.amount}, {self.date}, {self.name}, {self.category})"
 		
 	
 

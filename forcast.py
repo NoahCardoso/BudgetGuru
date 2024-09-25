@@ -1,7 +1,5 @@
-
-
-from budget import Budget
-
+import numpy as np
+from sklearn.linear_model import LinearRegression
 
 def predict_spending(budget, category):
 	total_transactions = []
@@ -40,32 +38,22 @@ def predict_spending_next_budget(budget, categories):
 	return my_dict
 
 
-def plot(y):
-	x = []
-	n = len(y)
+def plot(sequence):
+	# Sequence
+	sequence = [50, 100, 150]
 
-	for i in range(n):
-		x.append(i+1)
+	# Prepare the data
+	X = np.array([0, 1, 2]).reshape(-1, 1)  # Indices
+	y = np.array(sequence)  # Sequence values
 
-	sum_x = sum(x)
-	sum_y = sum(y)
-	sum_xy = 0
+	# Create the model
+	model = LinearRegression()
 
-	for i in range(n):
-		sum_xy += x[i] * y[i]
+	# Train the model
+	model.fit(X, y)
 
-	sum_x2 = sum(i ** 2 for i in x)
-	m = 0
-	try:
-		# Slope of the best line of fit
-		m = (n * sum_xy - sum_x * sum_y) / (n * sum_x2 - sum_x ** 2)
-	except ZeroDivisionError:
-		return 0
+	# Predict the next number in the sequence
+	next_index = np.array([[3]])
+	predicted_value = model.predict(next_index)
 
-	# Intercept of the best line of fit
-	b = (sum_y - m * sum_x) / n
-
-	# Predict the next point on the line of best fit
-	predict = m * (n + 1) + b
-
-	return predict
+	return predicted_value[0]

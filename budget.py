@@ -2,6 +2,7 @@ from expenses import Transaction
 category_used = ["Food & Drink", "Entertainment", "Groceries", "Transport"]
 class Budget:
 
+	#budget = [{category: amount, ..}, [transaction]]
 	def __init__(self, categories, amounts, transactions=[]):
 		self._budget = {}
 		for category in category_used:
@@ -12,21 +13,26 @@ class Budget:
 
 		self._transactions = transactions
 
+	#adds transactions to the budget
 	def add_transaction(self, amount, date, name, category):
 		newTransaction = Transaction(amount, date, name, category)
-		self._transactions.append(Transaction)
+		self._transactions.append(newTransaction)
 	
-	def total_expenses_of(self, category):
+	#returns total amount spent in a category
+	def total_spending_category(self, category):
 		total = 0
 		for expenses in self._transactions:
 			if expenses.category == category:
 				total += expenses.amount
 		return total
 
+	#displays transactions
 	def print_transactions(self):
 		for expense in self._transactions:
 			print("Date: " + expense.date + ", Name: " + expense.name + ", Amount: " + expense.amount + ", Category: " + expense.category)
 	
+	#returns a dict of all of the spending in each category
+	#{category: amount, ..}
 	def total_spending(self):
 		my_dict = {}
 		for category in category_used:
@@ -43,8 +49,24 @@ class Budget:
 	def budget(self):
 		return self._budget
 	
+	def to_dict(self):
+		return {
+			"budget": self._budget,
+			"transactions": [transaction.to_dict() for transaction in self._transactions]
+		}
+
+	@classmethod
+	def from_dict(cls, data):
+		budget = cls(list(data["budget"].keys()), list(data["budget"].values()))
+		budget._transactions = [Transaction.from_dict(t) for t in data["transactions"]]
+		return budget
+
+	def print_transactions(self):
+		for transaction in self._transactions:
+			print(f"Date: {transaction.date}, Name: {transaction.name}, Amount: {transaction.amount}, Category: {transaction.category}")
+
 	def __repr__(self):
-		transactions_str = " | ".join([str(transaction) for transaction in self._transactions])
-		return f"Budget\t\t | {self._budget}\nTransactions\t | {transactions_str}\n"
+		return f"Budget({self._budget}, {len(self._transactions)} transactions)"
+
 	
 	
