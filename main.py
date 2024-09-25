@@ -4,7 +4,7 @@ from budget import Budget
 from forcast import forcast_spending_next_budget, predict_spending_next_budget
 from graphme import make_report
 from suggestions import suggestions
-from expenses import Transaction
+#from expenses import Transaction
 
 SAVE_FILE = "budgets_data.json"
 categories = ["Food & Drink", "Entertainment", "Groceries", "Transport"]
@@ -52,8 +52,9 @@ def main():
     current_budget, budgets = load_data()
 
     if not budgets:  # Initialize if no data exists
-        budgets = [Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),]),Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])]
-        current_budget = Budget(categories, [0, 0, 0, 0], [Transaction(5, "", "", "Transport"), Transaction(10, "", "", "Transport")])
+        #budgets = [Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),]),Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])]
+        budgets = []
+        current_budget = Budget(categories, [0, 0, 0, 0])
 
     while True:
         print("1. Budget")
@@ -80,7 +81,11 @@ def main():
                     amounts = input().split(" ")
 
                     try:
-                        amounts = [int(amount) for amount in amounts]
+                        for i in range(4):
+                            amounts[i] = int(amounts)
+                            if amounts[i] < 0:
+                                ValueError("Error! Number must be greater then 0!")
+                        
                         budgets.append(Budget(categories, amounts))
                         current_budget = budgets[-1]
                         print(current_budget)
@@ -144,7 +149,7 @@ def main():
             end_line()
             print("View Budget vs Spending")
             make_report(current_budget.budget, current_budget.total_spending())
-            print("Red show spending. Green shows you budgeted amount")
+            print("Red shows spending. Green shows you budgeted amount")
             input()
 
         #feedback on budget
