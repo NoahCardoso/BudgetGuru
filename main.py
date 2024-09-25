@@ -104,8 +104,8 @@ def main():
 
                 elif choice == "q":
                     break
-        # Transaction handling
 
+        # Transaction handling
         elif choice == "2":
             end_line()
             while True:
@@ -124,7 +124,8 @@ def main():
                                 amount, date, name, category = input().split(" ")
                                 amount = int(amount)
                                 current_budget.add_transaction(amount, date, name, category)
-                                break
+                                if category in categories:
+                                    break
                             except ValueError:
                                 print("Error! Enter valid values.")
 
@@ -133,8 +134,6 @@ def main():
 
                 elif choice == "q":
                     break
-
-        # Reports and other features omitted for brevity...
         # Report
         elif choice == "3":
             end_line()
@@ -147,25 +146,28 @@ def main():
             end_line()
             suggestions(current_budget)
             choice = input("press q")
-            break
 
         elif choice == "5":
-            end_line()
-            print("1. Predict based on previous budgets")
-            print("2. Predict based current budget")
-            choice = input()
-            if choice == "1":
-                make_report(current_budget.budget,
-                            forcast_spending_next_budget(budgets, categories))
-            elif choice == "2":
-                make_report(current_budget.budget, predict_spending_next_budget(
-                    current_budget, categories))
-            temp = input()
+            while True:
+                end_line()
+                print("1. Predict based on previous budgets")
+                print("2. Predict based current budget")
+                choice = input()
+                if choice == "1":
+                    make_report(current_budget.budget,
+                                forcast_spending_next_budget(budgets, categories))
+                elif choice == "2":
+                    make_report(current_budget.budget, predict_spending_next_budget(
+                        current_budget, categories))
+                elif choice == "q":
+                    break
+                temp = input()
 
         elif choice == "q":
 			# Save data before exiting
            save_data(current_budget, budgets)
            break
+        end_line()
 
 if __name__ == "__main__":
     main()
