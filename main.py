@@ -4,6 +4,7 @@ from budget import Budget
 from forcast import forcast_spending_next_budget, predict_spending_next_budget
 from graphme import make_report
 from suggestions import suggestions
+from expenses import Transaction
 
 SAVE_FILE = "budgets_data.json"
 categories = ["Food & Drink", "Entertainment", "Groceries", "Transport"]
@@ -51,8 +52,8 @@ def main():
     current_budget, budgets = load_data()
 
     if not budgets:  # Initialize if no data exists
-        budgets = []
-        current_budget = Budget(categories, [0, 0, 0, 0], [])
+        budgets = [Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),]),Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])]
+        current_budget = Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])
 
     while True:
         print("1. Budget")
@@ -83,6 +84,7 @@ def main():
                         budgets.append(Budget(categories, amounts))
                         current_budget = budgets[-1]
                         print(current_budget)
+                        
                     except (IndexError, ValueError):
                         print("Error! Please enter valid numbers!")
 
@@ -100,10 +102,11 @@ def main():
                         print("Error! You must enter a number!")
 
                 elif choice == "3":
-                    print(current_budget)
+                    print(current_budget) 
 
                 elif choice == "q":
                     break
+                end_line()
 
         # Transaction handling
         elif choice == "2":
@@ -134,6 +137,8 @@ def main():
 
                 elif choice == "q":
                     break
+                end_line()
+
         # Report
         elif choice == "3":
             end_line()
@@ -142,15 +147,17 @@ def main():
             print("Red show spending. Green shows you budgeted amount")
             input()
 
+        #feedback on budget
         elif choice == "4":
             end_line()
             suggestions(current_budget)
             choice = input("press q")
 
+        #forcast future spending
         elif choice == "5":
             while True:
                 end_line()
-                print("1. Predict based on previous budgets")
+                print("1. Predict based on previous budgets (Requires minimum of 2 budgets)")
                 print("2. Predict based current budget")
                 choice = input()
                 if choice == "1":
@@ -161,7 +168,7 @@ def main():
                         current_budget, categories))
                 elif choice == "q":
                     break
-                temp = input()
+                end_line()
 
         elif choice == "q":
 			# Save data before exiting

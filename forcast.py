@@ -39,21 +39,21 @@ def predict_spending_next_budget(budget, categories):
 
 
 def plot(sequence):
-	# Sequence
-	sequence = [50, 100, 150]
 
 	# Prepare the data
 	X = np.array([0, 1, 2]).reshape(-1, 1)  # Indices
 	y = np.array(sequence)  # Sequence values
-
+	print(sequence)
 	# Create the model
 	model = LinearRegression()
 
 	# Train the model
+
 	model.fit(X, y)
 
 	# Predict the next number in the sequence
 	next_index = np.array([[3]])
 	predicted_value = model.predict(next_index)
+	prediction = round(predicted_value[0],2)
 
-	return predicted_value[0]
+	return prediction
