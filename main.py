@@ -81,8 +81,8 @@ def main():
                     amounts = input().split(" ")
 
                     try:
-                        for i in range(4):
-                            amounts[i] = int(amounts)
+                        for i in range(len(categories)):
+                            amounts[i] = int(amounts[i])
                             if amounts[i] < 0:
                                 ValueError("Error! Number must be greater then 0!")
                         
