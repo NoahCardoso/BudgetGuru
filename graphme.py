@@ -5,9 +5,6 @@ def make_report(budget, spending):
 	categories = list(budget.keys())
 	spent = list(spending.values())
 	budgets = list(budget.values())
-	print(spent)
-	print(budgets)
-
 
 	# Set the positions for the bars
 	bar_width = 0.35

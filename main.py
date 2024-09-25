@@ -53,7 +53,7 @@ def main():
 
     if not budgets:  # Initialize if no data exists
         budgets = [Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),]),Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])]
-        current_budget = Budget(categories, [0, 0, 0, 0], [Transaction(10, "", "", "Transport"),])
+        current_budget = Budget(categories, [0, 0, 0, 0], [Transaction(5, "", "", "Transport"), Transaction(10, "", "", "Transport")])
 
     while True:
         print("1. Budget")
